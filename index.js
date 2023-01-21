@@ -10,6 +10,7 @@ import generalRoutes from "./routes/general.js";
 import managementRoutes from "./routes/management.js";
 import salesRoutes from "./routes/sales.js";
 import connectDB from "./config/db.js";
+import { errorHandler } from "./config/errorHandler.js";
 
 // data imports
 import User from "./models/User.js";
@@ -29,6 +30,10 @@ import {
 
 /* CONFIGURATION */
 dotenv.config();
+
+//connect to database
+await connectDB();
+
 const app = express();
 app.use(express.json());
 app.use(helmet());
@@ -36,7 +41,14 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors());
+const corsOptions = {
+  origin: [
+    "http://localhost:3000",
+    // "https://dilip-next-graphql-mongodb.herokuapp.com",
+  ],
+  credentials: true,
+};
+app.use(cors(corsOptions));
 
 /* ROUTES */
 app.use("/client", clientRoutes);
@@ -44,11 +56,11 @@ app.use("/general", generalRoutes);
 app.use("/management", managementRoutes);
 app.use("/sales", salesRoutes);
 
+// global error handler
+app.use(errorHandler);
+
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 5000;
-
-//connect to database
-await connectDB();
 
 app.listen(PORT, function (err) {
   if (err) {

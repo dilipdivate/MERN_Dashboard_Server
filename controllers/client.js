@@ -61,14 +61,22 @@ export const getTransactions = async (req, res) => {
       .skip(page * pageSize)
       .limit(pageSize);
 
-    const total = await Transaction.countDocuments({
-      name: { $regex: search, $options: "i" },
-    });
+    if (search) {
+      const total = await Transaction.countDocuments({
+        name: { $regex: search, $options: "i" },
+      });
+      res.status(200).json({
+        transactions,
+        total,
+      });
+    } else {
+      const total = await Transaction.countDocuments({});
 
-    res.status(200).json({
-      transactions,
-      total,
-    });
+      res.status(200).json({
+        transactions,
+        total,
+      });
+    }
   } catch (error) {
     res.status(404).json({ message: error.message });
   }

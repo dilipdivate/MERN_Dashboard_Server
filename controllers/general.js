@@ -2,10 +2,20 @@ import User from "../models/User.js";
 import OverallStat from "../models/OverallStat.js";
 import Transaction from "../models/Transaction.js";
 
-export const getUser = async (req, res) => {
+// export const getUserByID = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const user = await User.findById(id);
+//     res.status(200).json(user);
+//   } catch (error) {
+//     res.status(404).json({ message: error.message });
+//   }
+// };
+
+export const getUserByEmail = async (req, res) => {
   try {
-    const { id } = req.params;
-    const user = await User.findById(id);
+    const { email } = req.params;
+    const user = await User.findOne({ email });
     res.status(200).json(user);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -53,6 +63,16 @@ export const getDashboardStats = async (req, res) => {
       todayStats,
       transactions,
     });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+export const postUser = async (req, res) => {
+  try {
+    console.log("DILLREQ:", req.body);
+    const user = await User.create(req.body);
+    res.status(201).json(user);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
