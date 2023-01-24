@@ -53,7 +53,8 @@ export const deleteCustomerSrv = async (id) => {
 function customerDetails(customer) {
   const {
     _id,
-    name,
+    firstName,
+    lastName,
     email,
     city,
     state,
@@ -67,7 +68,8 @@ function customerDetails(customer) {
 
   return {
     _id,
-    name,
+    firstName,
+    lastName,
     email,
     city,
     state,

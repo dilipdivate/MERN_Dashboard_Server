@@ -6,6 +6,8 @@ export const errorHandler = (err, req, res, next) => {
       const is404 = err.toLowerCase().endsWith("not found");
       const statusCode = is404 ? 404 : 400;
       return res.status(statusCode).json({ message: err });
+    case typeof err === "CastError":
+      return (err = handleCastError(err, res));
     case typeof err === "ValidationError":
       return (err = handleValidationError(err, res));
     case err.code && err.code == 11000:
@@ -34,4 +36,10 @@ const handleValidationError = (err, res) => {
   } else {
     res.status(code).send({ messages: errors, fields: fields });
   }
+};
+
+const handleCastError = (err, res) => {
+  const message = `Invalid ${err.path}: ${err.value}`;
+  const field = Object.keys(err.keyValue);
+  res.status(code).send({ messages: message, fields: field });
 };
